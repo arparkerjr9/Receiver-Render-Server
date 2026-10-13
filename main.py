@@ -1,19 +1,19 @@
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-# Mount static dashboard
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Recording state stored in memory
-recording_state = {"recording": False}
+recording_state = {
+    "recording": False,
+    "timestamp": None,
+    "pc": None
+}
 
 @app.post("/update")
-async def update_state(data: dict):
-    recording_state["recording"] = data.get("recording", False)
-    return JSONResponse({"status": "ok"})
+async def update_status(payload: dict):
+    recording_state["recording"] = payload.get("recording", False)
+    recording_state["timestamp"] = payload.get("timestamp")
+    recording_state["pc"] = payload.get("pc")
+    return {"status": "ok"}
 
 @app.get("/status")
 async def get_status():
