@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-
 app = FastAPI()
+
+# ⭐ REQUIRED: Serve the /static folder
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 recording_state = {
     "recording": False,
@@ -20,3 +22,4 @@ async def update_status(payload: dict):
 @app.get("/status")
 async def get_status():
     return recording_state
+
