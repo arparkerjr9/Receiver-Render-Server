@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recording Status Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+        .pc-box { padding: 15px; margin-bottom: 10px; border-radius: 8px; color: white; }
+        .green { background-color: #2ecc71; }
+        .red { background-color: #e74c3c; }
+        .timestamp { font-size: 14px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<h1>Recording Status Dashboard</h1>
+<div id="status-container">Loading...</div>
+
+<script>
+async function fetchStatus() {
+    try {
+        const response = await fetch("/status");
+        const data = await response.json();
+
+        const container = document.getElementById("status-container");
+        container.innerHTML = "";
+
+        data.forEach(pc => {
+            const box = document.createElement("div");
+            box.className = "pc-box " + (pc.recording ? "green" : "red");
+
+            box.innerHTML = `
+                <strong>${pc.pc_id}</strong><br>
+                Recording: ${pc.recording}<br>
+                <span class="timestamp">Last event: ${pc.timestamp}</span>
+            `;
+
+            container.appendChild(box);
+        });
+
+    } catch (err) {
+        document.getElementById("status-container").innerHTML =
+            "Error fetching status.";
+    }
+}
+
+fetchStatus();
+setInterval(fetchStatus, 10000);
+</script>
+
+</body>
+</html>
