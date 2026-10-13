@@ -1,51 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Recording Status Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+
     <style>
-        body { font-family: Arial; background: #f4f4f4; padding: 20px; }
-        .pc-box { padding: 15px; margin-bottom: 10px; border-radius: 8px; color: white; }
-        .green { background-color: #2ecc71; }
-        .red { background-color: #e74c3c; }
-        .timestamp { font-size: 14px; opacity: 0.8; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        #statusBox {
+            width: 250px;
+            height: 120px;
+            margin: 20px auto;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        #timestamp, #pcname {
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
 
-<h1>Recording Status Dashboard</h1>
-<div id="status-container">Loading...</div>
+    <h1>Recording Status</h1>
 
-<script>
-async function fetchStatus() {
-    try {
-        const response = await fetch(""https://receiver-server-render.onrender.com/status"");
-        const data = await response.json();
+    <div id="statusBox">Loading...</div>
 
-        const container = document.getElementById("status-container");
-        container.innerHTML = "";
+    <div id="timestamp">Timestamp: --</div>
+    <div id="pcname">PC: --</div>
 
-        data.forEach(pc => {
-            const box = document.createElement("div");
-            box.className = "pc-box " + (pc.recording ? "green" : "red");
-
-            box.innerHTML = `
-                <strong>${pc.pc_id}</strong><br>
-                Recording: ${pc.recording}<br>
-                <span class="timestamp">Last event: ${pc.timestamp}</span>
-            `;
-
-            container.appendChild(box);
-        });
-
-    } catch (err) {
-        document.getElementById("status-container").innerHTML =
-            "Error fetching status.";
-    }
-}
-
-fetchStatus();
-setInterval(fetchStatus, 10000);
-</script>
+    <!-- Cache‑buster to force browser to load new JS -->
+    <script src="dashboard.js?v=2"></script>
 
 </body>
 </html>
