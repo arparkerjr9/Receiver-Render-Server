@@ -3,29 +3,54 @@ async function updateStatus() {
         const response = await fetch("https://receiver-server-render.onrender.com/status");
         const data = await response.json();
 
-        const box = document.getElementById("statusBox");
-        const timestamp = document.getElementById("timestamp");
-        const pcname = document.getElementById("pcname");
+        const container = document.getElementById("pcContainer");
+        container.innerHTML = "";
 
-        if (data.recording) {
-            box.style.backgroundColor = "green";
-            box.textContent = "Recording";
-        } else {
-            box.style.backgroundColor = "red";
-            box.textContent = "Not Recording";
+        const pcNames = Object.keys(data);
+        if (pcNames.length === 0) {
+            container.textContent = "No PCs have reported yet.";
+            return;
         }
 
-        timestamp.textContent = "Timestamp: " + (data.timestamp || "--");
-        pcname.textContent = "PC: " + (data.pc || "--");
+        pcNames.forEach(pc => {
+            const info = data[pc];
+
+            const card = document.createElement("div");
+            card.className = "pcCard";
+
+            const nameEl = document.createElement("div");
+            nameEl.className = "pcName";
+            nameEl.textContent = pc;
+
+            const statusEl = document.createElement("div");
+            statusEl.className = "pcStatus";
+
+            const tsEl = document.createElement("div");
+            tsEl.className = "pcTimestamp";
+            tsEl.textContent = "Timestamp: " + (info.timestamp || "--");
+
+            if (info.recording) {
+                card.style.backgroundColor = "green";
+                statusEl.textContent = "Recording";
+            } else {
+                card.style.backgroundColor = "red";
+                statusEl.textContent = "Not Recording";
+            }
+
+            card.appendChild(nameEl);
+            card.appendChild(statusEl);
+            card.appendChild(tsEl);
+
+            container.appendChild(card);
+        });
 
     } catch (err) {
         console.log("Dashboard fetch error:", err);
-        const box = document.getElementById("statusBox");
-        box.style.backgroundColor = "gray";
-        box.textContent = "Error";
+        const container = document.getElementById("pcContainer");
+        container.textContent = "Error loading status.";
     }
 }
 
-// Update every second
 setInterval(updateStatus, 1000);
 updateStatus();
+
